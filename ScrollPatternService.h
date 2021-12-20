@@ -7,7 +7,12 @@ class ScrollPatternService
 {
     private:
 
-      #define NUM_LEDS 600
+      #define LED_TYPE WS2812B
+      #define COLOR_ORDER GRB
+      #define PIN 7
+      #define NUM_LEDS 100
+      
+      CRGB leds[NUM_LEDS];
       
       #define NumberOfColors 3
       int BlockLEDCounter;
@@ -17,7 +22,7 @@ class ScrollPatternService
       int WaveDelay = 100;
       bool Instant = true;
 
-      void setupPattern(struct CRGB * leds, CRGB Color1, CRGB Color2, CRGB Color3) 
+      void setupPattern(CRGB Color1, CRGB Color2, CRGB Color3) 
       {
         int LedPosition;
         
@@ -60,11 +65,16 @@ class ScrollPatternService
 
     public:
         
-        void runPattern(struct CRGB * leds, CRGB Color1, CRGB Color2, CRGB Color3, bool isFirstCall)
+        void setup()
+        {
+          FastLED.addLeds<LED_TYPE,PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+        }
+
+        void runPattern(CRGB Color1, CRGB Color2, CRGB Color3, bool isFirstCall)
         {
           if(isFirstCall)
           {
-            setupPattern(leds, Color1, Color2, Color3);
+            setupPattern(Color1, Color2, Color3);
           }
           
           memmove( &leds[1], &leds[0], (NUM_LEDS-1) * sizeof(CRGB) );
